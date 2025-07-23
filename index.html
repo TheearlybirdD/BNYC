@@ -1,0 +1,373 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>豆子的廉洁主题数字艺术展</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #001c30;
+            overflow: hidden;
+            font-family: "Microsoft YaHei", sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .theme-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5vw;
+            font-weight: bold;
+            color: rgba(100, 200, 255, 0.8);
+            text-shadow: 0 0 15px rgba(100, 200, 255, 0.8);
+            opacity: 0.9;
+            z-index: 2;
+            text-align: center;
+            animation: breathe 3s infinite ease-in-out;
+        }
+        
+        .quote-container {
+            position: absolute;
+            bottom: 10%;
+            left: 0;
+            width: 100%;
+            padding: 0 5%;
+            z-index: 3;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .quote {
+            background: rgba(0, 30, 50, 0.7);
+            backdrop-filter: blur(5px);
+            color: rgba(170, 220, 235, 0.95);
+            text-align: center;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-size: 4vw;
+            max-width: 90%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+        }
+        
+        .quote-highlight {
+            color: #ffd700;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        
+        .bamboo {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 10%;
+            background-image: linear-gradient(transparent 30%, rgba(0, 100, 70, 0.3) 100%);
+            z-index: 2;
+            display: flex;
+            justify-content: space-around;
+        }
+        
+        .bamboo-segment {
+            width: 15px;
+            height: 100%;
+            background: linear-gradient(to right, 
+                rgba(0, 100, 70, 0.7),
+                rgba(0, 160, 100, 0.8),
+                rgba(0, 100, 70, 0.7));
+            border-radius: 7px;
+            position: relative;
+        }
+        
+        .bamboo-segment::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 25px;
+            height: 3px;
+            background: rgba(0, 80, 60, 0.8);
+            border-radius: 2px;
+        }
+        
+        .bamboo-segment::after {
+            content: '';
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 25px;
+            height: 3px;
+            background: rgba(0, 80, 60, 0.8);
+            border-radius: 2px;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { text-shadow: 0 0 5px #ffd700; }
+            50% { text-shadow: 0 0 15px #ffd700, 0 0 25px #ff8c00; }
+        }
+        
+        @media (min-width: 768px) {
+            .theme-text { font-size: 48px; }
+            .quote { font-size: 28px; padding: 20px 40px; }
+        }
+        
+        @media (max-width: 480px) {
+            .quote { font-size: 18px; padding: 10px 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas id="lotusCanvas"></canvas>
+        <div class="theme-text">廉洁巴南</div>
+        <div class="quote-container">
+            <div id="quote" class="quote"></div>
+        </div>
+        <div class="bamboo">
+            <div class="bamboo-segment"></div>
+            <div class="bamboo-segment"></div>
+            <div class="bamboo-segment"></div>
+            <div class="bamboo-segment"></div>
+            <div class="bamboo-segment"></div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化Canvas
+        const canvas = document.getElementById('lotusCanvas');
+        const ctx = canvas.getContext('2d');
+        const quoteEl = document.getElementById('quote');
+        
+        // 设置Canvas尺寸为容器尺寸
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        // 廉洁格言库
+        const quotes = [
+            "清正在德，<span class='quote-highlight'>廉洁</span>在志",
+            "<span class='quote-highlight'>莲</span>因洁而尊，人因<span class='quote-highlight'>廉</span>而正",
+            "淡如秋菊何妨瘦，<span class='quote-highlight'>清</span>若夏荷不染尘",
+            "<span class='quote-highlight'>名节</span>重于泰山，<span class='quote-highlight'>利欲</span>轻于鸿毛",
+            "心正则<span class='quote-highlight'>廉洁</span>，身正则刚直"
+        ];
+        
+        // 粒子系统（代表莲花花瓣）
+        const particles = [];
+        
+        // 粒子类
+        class Particle {
+            constructor() {
+                this.reset();
+                this.size = Math.random() * 8 + 4;
+                // 30%的粒子带有"廉"或"洁"文字
+                this.hasText = Math.random() < 0.3;
+                this.text = this.hasText ? (Math.random() > 0.5 ? "廉" : "洁") : "";
+                this.fontSize = Math.floor(this.size * 1.2);
+            }
+            
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + this.size * 2;
+                this.speed = Math.random() * 0.8 + 0.3;
+                this.color = `hsla(${160 + Math.random() * 40}, 80%, ${60 + Math.random()*30}%, ${0.6 + Math.random()*0.3})`;
+                this.angle = Math.random() * Math.PI * 2;
+                this.spin = (Math.random() - 0.5) * 0.03;
+                this.waveAmplitude = Math.random() * 2 + 1;
+            }
+            
+            update() {
+                // 花瓣向上浮动
+                this.y -= this.speed;
+                this.x += Math.sin(this.angle) * this.waveAmplitude;
+                this.angle += this.spin;
+                
+                // 超出边界重置
+                if (this.y < -this.size * 2) {
+                    this.reset();
+                }
+            }
+            
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                
+                // 花瓣形状（椭圆）
+                ctx.beginPath();
+                ctx.ellipse(0, 0, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
+                
+                // 填充颜色并添加阴影
+                ctx.fillStyle = this.color;
+                ctx.shadowColor = 'rgba(100, 200, 255, 0.5)';
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                
+                // 如果有文字，绘制在花瓣中央
+                if (this.hasText && this.text) {
+                    ctx.font = `bold ${this.fontSize}px "Microsoft YaHei", sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+                    ctx.shadowBlur = 3;
+                    ctx.fillText(this.text, 0, 0);
+                }
+                
+                ctx.restore();
+            }
+        }
+
+        // 创建气泡类
+        class Bubble {
+            constructor() {
+                this.reset();
+            }
+            
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height;
+                this.radius = Math.random() * 6 + 2;
+                this.speed = Math.random() * 1.5 + 0.8;
+                this.sway = Math.random() * 0.05;
+                this.angle = Math.random() * Math.PI;
+            }
+            
+            update() {
+                this.y -= this.speed;
+                this.x += Math.sin(this.angle) * 0.8;
+                this.angle += this.sway;
+                
+                if (this.y < -this.radius) {
+                    this.reset();
+                }
+            }
+            
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                
+                // 气泡光效
+                const gradient = ctx.createRadialGradient(
+                    this.x - this.radius/3, 
+                    this.y - this.radius/3,
+                    0,
+                    this.x, 
+                    this.y,
+                    this.radius
+                );
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+                gradient.addColorStop(0.7, 'rgba(200, 230, 255, 0.6)');
+                gradient.addColorStop(1, 'rgba(150, 220, 255, 0.1)');
+                
+                ctx.fillStyle = gradient;
+                ctx.fill();
+            }
+        }
+
+        // 创建300个花瓣粒子和30个气泡
+        for (let i = 0; i < 300; i++) {
+            particles.push(new Particle());
+        }
+        
+        const bubbles = [];
+        for (let i = 0; i < 30; i++) {
+            bubbles.push(new Bubble());
+        }
+
+        // 随机显示廉洁格言
+        function showQuote() {
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            quoteEl.innerHTML = randomQuote;
+            quoteEl.style.opacity = 1;
+            
+            // 5秒后淡出
+            setTimeout(() => {
+                quoteEl.style.opacity = 0;
+            }, 5000);
+        }
+
+        // 主动画循环
+        function animate() {
+            // 清除画布带半透明覆盖（产生拖尾效果）
+            ctx.fillStyle = 'rgba(0, 28, 48, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制水下光效
+            const gradient = ctx.createRadialGradient(
+                canvas.width/2, 
+                canvas.height/2, 
+                0,
+                canvas.width/2, 
+                canvas.height/2, 
+                Math.max(canvas.width, canvas.height)
+            );
+            gradient.addColorStop(0, 'rgba(0, 100, 150, 0.3)');
+            gradient.addColorStop(1, 'rgba(0, 28, 48, 0.1)');
+            ctx.globalCompositeOperation = 'lighten';
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.globalCompositeOperation = 'source-over';
+            
+            // 更新并绘制所有粒子
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            
+            // 更新并绘制气泡
+            bubbles.forEach(b => {
+                b.update();
+                b.draw();
+            });
+            
+            requestAnimationFrame(animate);
+        }
+
+        // 启动动画和格言切换
+        animate();
+        showQuote();
+        setInterval(showQuote, 8000);
+    </script>
+</body>
+</html>
