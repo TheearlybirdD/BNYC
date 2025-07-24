@@ -1,373 +1,604 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>豆子的廉洁主题数字艺术展</title>
+    <title>廉洁巴南 · 清风长卷</title>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
-        body {
-            background: #001c30;
+
+        body, html {
+            width: 100%;
+            height: 100%;
             overflow: hidden;
-            font-family: "Microsoft YaHei", sans-serif;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(135deg, #0d2c54 0%, #021729 100%);
+            font-family: 'Ma Shan Zheng', 'Microsoft YaHei', sans-serif;
         }
-        
-        .container {
+
+        #mainScene {
             position: relative;
             width: 100%;
-            max-width: 800px;
             height: 100%;
-            margin: 0 auto;
             overflow: hidden;
         }
-        
-        canvas {
+
+        /* ==================== 核心标题 ==================== */
+        .main-title {
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            text-align: center;
+        }
+
+        .title-text {
+            font-size: 82px;
+            font-weight: bold;
+            color: #e3f2fd;
+            text-shadow: 
+                0 0 15px rgba(79, 195, 247, 0.9),
+                0 0 30px rgba(79, 195, 247, 0.7),
+                0 0 45px rgba(79, 195, 247, 0.5);
+            animation: titleGlow 5s ease-in-out infinite;
+            margin-bottom: 20px;
+            letter-spacing: 8px;
+        }
+
+        .subtitle {
+            font-size: 32px;
+            color: #b3e5fc;
+            animation: subtitlePulse 4s infinite;
+            letter-spacing: 6px;
+            background: rgba(10, 37, 64, 0.4);
+            padding: 12px 30px;
+            border-radius: 40px;
+            backdrop-filter: blur(8px);
+        }
+
+        /* ==================== 动态背景 ==================== */
+        .water-background {
+            position: absolute;
+            bottom: 0;
             width: 100%;
-            height: 100%;
+            height: 40%;
+            background: linear-gradient(to top, 
+                rgba(10, 80, 140, 0.7) 0%, 
+                rgba(30, 110, 170, 0.6) 50%,
+                transparent 100%);
+            opacity: 0.5;
             z-index: 1;
         }
-        
-        .theme-text {
+
+        .ripple {
+            position: absolute;
+            bottom: 0;
+            width: 150%;
+            height: 25%;
+            background: radial-gradient(circle, 
+                rgba(100, 200, 255, 0.2) 0%, 
+                transparent 70%);
+            border-radius: 100% 100% 0 0;
+            transform: translateX(-10%);
+            animation: ripple 15s infinite ease-in-out;
+        }
+
+        /* ==================== 莲花系统 ==================== */
+        .lotus-container {
+            position: absolute;
+            bottom: 35%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 400px;
+            z-index: 30;
+        }
+
+        .lotus-bud {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle at 40% 40%, 
+                #ff9a76 0%, 
+                #ff6b6b 50%, 
+                #e63946 100%);
+            border-radius: 50% 50% 30% 30%;
+            box-shadow: 0 0 25px rgba(255, 107, 107, 0.8);
+            animation: budPulse 3s ease-in-out infinite;
+            z-index: 35;
+        }
+
+        .lotus-bud::before {
+            content: '';
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: #ffd700;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+        }
+
+        .lotus-flower {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
+            height: 280px;
+        }
+
+        .lotus-petal {
+            position: absolute;
+            border-radius: 50% 50% 0 50%;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.9) 0%, 
+                rgba(255, 235, 255, 0.7) 50%, 
+                rgba(200, 230, 255, 0.4) 100%);
+            box-shadow: 0 0 15px rgba(220, 240, 255, 0.7);
+            transform-origin: bottom center;
+            animation: petalSway 8s ease-in-out infinite;
+        }
+
+        .lotus-center {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, 
+                #FFD700 0%, 
+                #FFA000 70%,
+                #E65100 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            z-index: 35;
+            animation: centerPulse 4s ease-in-out infinite;
+        }
+
+        .lotus-pollen {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: gold;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+            opacity: 0.8;
+        }
+
+        /* ==================== 青竹系统 ==================== */
+        .bamboo-container {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 40%;
+            z-index: 20;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .bamboo {
+            position: relative;
+            width: 30px;
+            height: 100%;
+            background: linear-gradient(to right, 
+                #1b5e20 0%, 
+                #2e7d32 20%, 
+                #388e3c 50%, 
+                #2e7d32 80%, 
+                #1b5e20 100%);
+            border-left: 3px solid #a5d6a7;
+            border-right: 3px solid #a5d6a7;
+            animation: bambooSway 6s infinite ease-in-out;
+        }
+
+        .bamboo-stem {
+            position: absolute;
+            width: 100%;
+            height: 90%;
+            bottom: 0;
+            background: inherit;
+        }
+
+        .bamboo-node {
+            position: absolute;
+            width: calc(100% + 6px);
+            height: 15px;
+            left: -3px;
+            background: #2e7d32;
+            border-top: 2px solid #a5d6a7;
+            border-bottom: 2px solid #a5d6a7;
+        }
+
+        .bamboo-leaf {
+            position: absolute;
+            width: 60px;
+            height: 25px;
+            background: #2e7d32;
+            border-radius: 50% 0;
+            z-index: -1;
+            animation: leafSway 5s infinite ease-in-out;
+        }
+
+        .bamboo-dew {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(173, 216, 230, 0.8);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(173, 216, 230, 0.8);
+            animation: dewGlow 3s infinite;
+        }
+
+        /* ==================== 小豆制作标识 ==================== */
+        .maker-tag {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(10, 37, 64, 0.6);
+            padding: 8px 15px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+            animation: makerFloat 3s ease-in-out infinite;
+        }
+
+        .maker-icon {
+            width: 24px;
+            height: 24px;
+            background: #e3f2fd;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .maker-icon::before {
+            content: '';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 5vw;
-            font-weight: bold;
-            color: rgba(100, 200, 255, 0.8);
-            text-shadow: 0 0 15px rgba(100, 200, 255, 0.8);
-            opacity: 0.9;
-            z-index: 2;
-            text-align: center;
-            animation: breathe 3s infinite ease-in-out;
+            width: 12px;
+            height: 12px;
+            background: #b3e5fc;
+            border-radius: 50%;
         }
-        
+
+        .maker-text {
+            color: #e3f2fd;
+            font-size: 14px;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(220, 240, 255, 0.5);
+        }
+
+        /* ==================== 名言系统 ==================== */
         .quote-container {
             position: absolute;
-            bottom: 10%;
-            left: 0;
-            width: 100%;
-            padding: 0 5%;
-            z-index: 3;
-            display: flex;
-            justify-content: center;
-        }
-        
-        .quote {
-            background: rgba(0, 30, 50, 0.7);
-            backdrop-filter: blur(5px);
-            color: rgba(170, 220, 235, 0.95);
+            top: 60%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 800px;
             text-align: center;
-            padding: 15px 25px;
-            border-radius: 12px;
-            font-size: 4vw;
-            max-width: 90%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 40;
+        }
+
+        .quote-box {
+            padding: 25px 35px;
+            font-size: 30px;
+            color: #e3f2fd;
+            background: rgba(10, 37, 64, 0.4);
+            border-radius: 15px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 15px 35px rgba(0, 30, 60, 0.5);
+            overflow: hidden;
             opacity: 0;
-            transition: opacity 1.5s ease-in-out;
-            border: 1px solid rgba(100, 200, 255, 0.3);
+            transform: translateY(30px);
+            transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            margin-bottom: 10px; /* 增加格言间距 */
         }
-        
-        .quote-highlight {
-            color: #ffd700;
+
+        .quote-box.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .word-highlight {
+            color: #FFF59D;
+            text-shadow: 0 0 10px rgba(255, 245, 157, 0.8);
             font-weight: bold;
-            animation: pulse 2s infinite;
         }
-        
-        .bamboo {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 10%;
-            background-image: linear-gradient(transparent 30%, rgba(0, 100, 70, 0.3) 100%);
-            z-index: 2;
-            display: flex;
-            justify-content: space-around;
+
+        /* ==================== 动画定义 ==================== */
+        @keyframes titleGlow {
+            0%, 100% { 
+                transform: scale(1) translateY(0);
+                text-shadow: 
+                    0 0 15px rgba(79, 195, 247, 0.9),
+                    0 0 30px rgba(79, 195, 247, 0.7),
+                    0 0 45px rgba(79, 195, 247, 0.5);
+            }
+            50% { 
+                transform: scale(1.05) translateY(-8px);
+                text-shadow: 
+                    0 0 25px rgba(79, 195, 247, 1),
+                    0 0 50px rgba(79, 195, 247, 0.8),
+                    0 0 75px rgba(79, 195, 247, 0.6);
+            }
         }
-        
-        .bamboo-segment {
-            width: 15px;
-            height: 100%;
-            background: linear-gradient(to right, 
-                rgba(0, 100, 70, 0.7),
-                rgba(0, 160, 100, 0.8),
-                rgba(0, 100, 70, 0.7));
-            border-radius: 7px;
-            position: relative;
+
+        @keyframes subtitlePulse {
+            0% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.03); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.9; }
         }
-        
-        .bamboo-segment::before {
-            content: '';
-            position: absolute;
-            top: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 25px;
-            height: 3px;
-            background: rgba(0, 80, 60, 0.8);
-            border-radius: 2px;
+
+        @keyframes petalSway {
+            0%, 100% { transform: rotate(0deg) translateY(0); opacity: 0.8; }
+            25% { transform: rotate(5deg) translateY(-5px); opacity: 0.9; }
+            75% { transform: rotate(-5deg) translateY(-5px); opacity: 0.9; }
         }
-        
-        .bamboo-segment::after {
-            content: '';
-            position: absolute;
-            bottom: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 25px;
-            height: 3px;
-            background: rgba(0, 80, 60, 0.8);
-            border-radius: 2px;
+
+        @keyframes budPulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.08); }
         }
-        
-        @keyframes breathe {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
-            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+
+        @keyframes centerPulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.12); }
         }
-        
-        @keyframes pulse {
-            0%, 100% { text-shadow: 0 0 5px #ffd700; }
-            50% { text-shadow: 0 0 15px #ffd700, 0 0 25px #ff8c00; }
+
+        @keyframes bambooSway {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-1.5deg); }
+            75% { transform: rotate(1.5deg); }
         }
-        
-        @media (min-width: 768px) {
-            .theme-text { font-size: 48px; }
-            .quote { font-size: 28px; padding: 20px 40px; }
+
+        @keyframes leafSway {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
         }
-        
-        @media (max-width: 480px) {
-            .quote { font-size: 18px; padding: 10px 15px; }
+
+        @keyframes dewGlow {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes makerFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes ripple {
+            0% { transform: translateX(-10%) scale(1); }
+            50% { transform: translateX(-10%) scale(1.05); }
+            100% { transform: translateX(-10%) scale(1); }
+        }
+
+        /* ==================== 响应式设计 ==================== */
+        @media (max-width: 900px) {
+            .title-text { font-size: 68px; }
+            .subtitle { font-size: 26px; }
+            .quote-box { font-size: 26px; padding: 20px 30px; }
+            .lotus-container { transform: scale(0.8) translateX(-55%); }
+        }
+
+        @media (max-width: 600px) {
+            .title-text { font-size: 56px; }
+            .subtitle { font-size: 20px; }
+            .quote-box { font-size: 22px; padding: 15px 25px; }
+            .lotus-container { transform: scale(0.7) translateX(-60%); bottom: 40%; }
+            .maker-tag { bottom: 10px; right: 10px; padding: 6px 12px; font-size: 12px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <canvas id="lotusCanvas"></canvas>
-        <div class="theme-text">廉洁巴南</div>
-        <div class="quote-container">
-            <div id="quote" class="quote"></div>
+    <div id="mainScene">
+        <!-- 动态水背景 -->
+        <div class="water-background">
+            <div class="ripple"></div>
         </div>
-        <div class="bamboo">
-            <div class="bamboo-segment"></div>
-            <div class="bamboo-segment"></div>
-            <div class="bamboo-segment"></div>
-            <div class="bamboo-segment"></div>
-            <div class="bamboo-segment"></div>
+
+        <!-- 核心标题 -->
+        <div class="main-title">
+            <div class="title-text">廉洁巴南</div>
+            <div class="subtitle">清风拂廉韵 · 正气润巴南</div>
+        </div>
+
+        <!-- 莲花系统 -->
+        <div class="lotus-container">
+            <div class="lotus-bud"></div>
+            <div class="lotus-flower" id="lotusFlower"></div>
+            <div class="lotus-center"></div>
+        </div>
+
+        <!-- 青竹系统 -->
+        <div class="bamboo-container" id="bambooContainer"></div>
+
+        <!-- 名言容器 -->
+        <div class="quote-container" id="quoteContainer">
+            <!-- 格言将通过JS动态添加 -->
+        </div>
+
+        <!-- 小豆制作标识 -->
+        <div class="maker-tag">
+            <div class="maker-icon"></div>
+            <div class="maker-text">小豆制作</div>
         </div>
     </div>
 
     <script>
-        // 初始化Canvas
-        const canvas = document.getElementById('lotusCanvas');
-        const ctx = canvas.getContext('2d');
-        const quoteEl = document.getElementById('quote');
-        
-        // 设置Canvas尺寸为容器尺寸
-        function resizeCanvas() {
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
+        // ==================== 配置参数 ====================
+        const config = {
+            lotusPetals: 12,       // 莲花花瓣数量
+            bambooCount: 8,        // 青竹数量
+            quotes: [
+                "清正在德，<span class='word-highlight'>廉洁</span>在志",
+                "<span class='word-highlight'>莲</span>因洁而尊，人因<span class='word-highlight'>廉</span>而正",
+                "淡如秋菊何妨瘦，<span class='word-highlight'>清</span>若夏荷不染尘",
+                "<span class='word-highlight'>名节</span>重于泰山，<span class='word-highlight'>利欲</span>轻于鸿毛",
+                "心正则<span class='word-highlight'>廉洁</span>，身正则刚直",
+                "廉者民之<span class='word-highlight'>表</span>也，贪者民之<span class='word-highlight'>贼</span>也",
+                "不徇私，不枉法，不欺心，不欺天",
+                "清风两袖朝天去，免得闾阎话短长"
+            ]
+        };
+
+        // ==================== 初始化函数 ====================
+        function init() {
+            createLotus();
+            createBamboo();
+            initQuotes();
+            setInterval(showNextQuote, 8000);
         }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        
-        // 廉洁格言库
-        const quotes = [
-            "清正在德，<span class='quote-highlight'>廉洁</span>在志",
-            "<span class='quote-highlight'>莲</span>因洁而尊，人因<span class='quote-highlight'>廉</span>而正",
-            "淡如秋菊何妨瘦，<span class='quote-highlight'>清</span>若夏荷不染尘",
-            "<span class='quote-highlight'>名节</span>重于泰山，<span class='quote-highlight'>利欲</span>轻于鸿毛",
-            "心正则<span class='quote-highlight'>廉洁</span>，身正则刚直"
-        ];
-        
-        // 粒子系统（代表莲花花瓣）
-        const particles = [];
-        
-        // 粒子类
-        class Particle {
-            constructor() {
-                this.reset();
-                this.size = Math.random() * 8 + 4;
-                // 30%的粒子带有"廉"或"洁"文字
-                this.hasText = Math.random() < 0.3;
-                this.text = this.hasText ? (Math.random() > 0.5 ? "廉" : "洁") : "";
-                this.fontSize = Math.floor(this.size * 1.2);
-            }
-            
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = canvas.height + this.size * 2;
-                this.speed = Math.random() * 0.8 + 0.3;
-                this.color = `hsla(${160 + Math.random() * 40}, 80%, ${60 + Math.random()*30}%, ${0.6 + Math.random()*0.3})`;
-                this.angle = Math.random() * Math.PI * 2;
-                this.spin = (Math.random() - 0.5) * 0.03;
-                this.waveAmplitude = Math.random() * 2 + 1;
-            }
-            
-            update() {
-                // 花瓣向上浮动
-                this.y -= this.speed;
-                this.x += Math.sin(this.angle) * this.waveAmplitude;
-                this.angle += this.spin;
-                
-                // 超出边界重置
-                if (this.y < -this.size * 2) {
-                    this.reset();
+
+        // ==================== 莲花创建 ====================
+        function createLotus() {
+            const lotus = document.getElementById('lotusFlower');
+            lotus.innerHTML = '';
+
+            // 创建分层花瓣（3层）
+            for (let layer = 0; layer < 3; layer++) {
+                const petals = config.lotusPetals + layer * 2;
+                const sizeBase = 280 - layer * 40;
+                const opacity = 0.9 - layer * 0.2;
+
+                for (let i = 0; i < petals; i++) {
+                    const petal = document.createElement('div');
+                    petal.className = 'lotus-petal';
+                    
+                    // 花瓣尺寸和位置
+                    const angle = (360 / petals) * i;
+                    const size = sizeBase - (i * 10);
+                    
+                    petal.style.width = `${size}px`;
+                    petal.style.height = `${size * 0.6}px`;
+                    petal.style.transform = `rotate(${angle}deg) translateY(-20px)`;
+                    petal.style.opacity = opacity;
+                    petal.style.animationDelay = `${i * 0.1}s`;
+
+                    // 随机添加"廉"/"洁"文字（30%概率）
+                    if (Math.random() < 0.3) {
+                        const text = document.createElement('div');
+                        text.style.position = 'absolute';
+                        text.style.top = '50%';
+                        text.style.left = '50%';
+                        text.style.transform = 'translate(-50%, -50%)';
+                        text.style.fontSize = '20px';
+                        text.style.color = 'rgba(255, 255, 255, 0.8)';
+                        text.textContent = Math.random() > 0.5 ? '廉' : '洁';
+                        petal.appendChild(text);
+                    }
+
+                    lotus.appendChild(petal);
                 }
             }
-            
-            draw() {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.angle);
+
+            // 添加花蕊粒子
+            for (let i = 0; i < 30; i++) {
+                const pollen = document.createElement('div');
+                pollen.className = 'lotus-pollen';
                 
-                // 花瓣形状（椭圆）
-                ctx.beginPath();
-                ctx.ellipse(0, 0, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 40;
                 
-                // 填充颜色并添加阴影
-                ctx.fillStyle = this.color;
-                ctx.shadowColor = 'rgba(100, 200, 255, 0.5)';
-                ctx.shadowBlur = 10;
-                ctx.fill();
+                pollen.style.left = `${50 + Math.cos(angle) * distance}%`;
+                pollen.style.top = `${50 + Math.sin(angle) * distance}%`;
+                pollen.style.animationDelay = `${Math.random() * 3}s`;
                 
-                // 如果有文字，绘制在花瓣中央
-                if (this.hasText && this.text) {
-                    ctx.font = `bold ${this.fontSize}px "Microsoft YaHei", sans-serif`;
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-                    ctx.shadowBlur = 3;
-                    ctx.fillText(this.text, 0, 0);
+                document.querySelector('.lotus-center').appendChild(pollen);
+            }
+        }
+
+        // ==================== 青竹创建 ====================
+        function createBamboo() {
+            const container = document.getElementById('bambooContainer');
+            container.innerHTML = '';
+
+            for (let i = 0; i < config.bambooCount; i++) {
+                const bamboo = document.createElement('div');
+                bamboo.className = 'bamboo';
+                
+                // 随机高度和摆动延迟
+                const height = 70 + Math.random() * 20;
+                bamboo.style.height = `${height}%`;
+                bamboo.style.animationDelay = `${i * 0.3}s`;
+
+                // 竹节
+                for (let j = 0; j < 5; j++) {
+                    const node = document.createElement('div');
+                    node.className = 'bamboo-node';
+                    node.style.top = `${j * 20}%`;
+                    bamboo.appendChild(node);
                 }
-                
-                ctx.restore();
-            }
-        }
 
-        // 创建气泡类
-        class Bubble {
-            constructor() {
-                this.reset();
-            }
-            
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = canvas.height;
-                this.radius = Math.random() * 6 + 2;
-                this.speed = Math.random() * 1.5 + 0.8;
-                this.sway = Math.random() * 0.05;
-                this.angle = Math.random() * Math.PI;
-            }
-            
-            update() {
-                this.y -= this.speed;
-                this.x += Math.sin(this.angle) * 0.8;
-                this.angle += this.sway;
-                
-                if (this.y < -this.radius) {
-                    this.reset();
+                // 竹叶
+                for (let j = 0; j < 6; j++) {
+                    const leaf = document.createElement('div');
+                    leaf.className = 'bamboo-leaf';
+                    
+                    const top = Math.random() * 80 + 5;
+                    const side = Math.random() > 0.5 ? 'left' : 'right';
+                    const size = Math.random() * 20 + 20;
+                    
+                    leaf.style.top = `${top}%`;
+                    leaf.style[side] = `${-size/2}px`;
+                    leaf.style.animationDelay = `${Math.random() * 2}s`;
+                    leaf.style.transform = side === 'left' ? 'scaleX(1)' : 'scaleX(-1)';
+                    
+                    bamboo.appendChild(leaf);
                 }
-            }
-            
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                
-                // 气泡光效
-                const gradient = ctx.createRadialGradient(
-                    this.x - this.radius/3, 
-                    this.y - this.radius/3,
-                    0,
-                    this.x, 
-                    this.y,
-                    this.radius
-                );
-                gradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
-                gradient.addColorStop(0.7, 'rgba(200, 230, 255, 0.6)');
-                gradient.addColorStop(1, 'rgba(150, 220, 255, 0.1)');
-                
-                ctx.fillStyle = gradient;
-                ctx.fill();
+
+                // 露珠
+                for (let j = 0; j < 3; j++) {
+                    const dew = document.createElement('div');
+                    dew.className = 'bamboo-dew';
+                    
+                    dew.style.left = `${Math.random() * 100}%`;
+                    dew.style.top = `${Math.random() * 50}%`;
+                    dew.style.animationDelay = `${Math.random() * 3}s`;
+                    
+                    bamboo.appendChild(dew);
+                }
+
+                container.appendChild(bamboo);
             }
         }
 
-        // 创建300个花瓣粒子和30个气泡
-        for (let i = 0; i < 300; i++) {
-            particles.push(new Particle());
-        }
-        
-        const bubbles = [];
-        for (let i = 0; i < 30; i++) {
-            bubbles.push(new Bubble());
-        }
-
-        // 随机显示廉洁格言
-        function showQuote() {
-            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-            quoteEl.innerHTML = randomQuote;
-            quoteEl.style.opacity = 1;
-            
-            // 5秒后淡出
-            setTimeout(() => {
-                quoteEl.style.opacity = 0;
-            }, 5000);
-        }
-
-        // 主动画循环
-        function animate() {
-            // 清除画布带半透明覆盖（产生拖尾效果）
-            ctx.fillStyle = 'rgba(0, 28, 48, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // 绘制水下光效
-            const gradient = ctx.createRadialGradient(
-                canvas.width/2, 
-                canvas.height/2, 
-                0,
-                canvas.width/2, 
-                canvas.height/2, 
-                Math.max(canvas.width, canvas.height)
-            );
-            gradient.addColorStop(0, 'rgba(0, 100, 150, 0.3)');
-            gradient.addColorStop(1, 'rgba(0, 28, 48, 0.1)');
-            ctx.globalCompositeOperation = 'lighten';
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.globalCompositeOperation = 'source-over';
-            
-            // 更新并绘制所有粒子
-            particles.forEach(p => {
-                p.update();
-                p.draw();
+        // ==================== 名言系统 ====================
+        function initQuotes() {
+            const container = document.getElementById('quoteContainer');
+            config.quotes.forEach((quote, index) => {
+                const quoteBox = document.createElement('div');
+                quoteBox.className = `quote-box ${index === 0 ? 'active' : ''}`;
+                quoteBox.innerHTML = quote;
+                container.appendChild(quoteBox);
             });
-            
-            // 更新并绘制气泡
-            bubbles.forEach(b => {
-                b.update();
-                b.draw();
-            });
-            
-            requestAnimationFrame(animate);
         }
 
-        // 启动动画和格言切换
-        animate();
-        showQuote();
-        setInterval(showQuote, 8000);
+        function showNextQuote() {
+            const boxes = document.querySelectorAll('.quote-box');
+            boxes.forEach(box => box.classList.remove('active'));
+            const currentIndex = (Array.from(boxes).findIndex(box => box.classList.contains('active')) + 1) % boxes.length;
+            boxes[currentIndex].classList.add('active');
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', init);
     </script>
 </body>
 </html>
